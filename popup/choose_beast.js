@@ -68,11 +68,14 @@ function listenForClicks() {
         if (e.target.classList.contains("beast")) {
             browser.tabs.query({active: true, currentWindow: true})
                 .then(beastify)
+                .then(updateIcon(true))
                 .catch(reportError);
+            updateIcon(true);
         }
         else if (e.target.classList.contains("reset")) {
             browser.tabs.query({active: true, currentWindow: true})
                 .then(reset)
+                .then(updateIcon(false))
                 .catch(reportError);
         }
     });
@@ -93,7 +96,23 @@ function reportExecuteScriptError(error) {
  * and add a click handler.
  * If we couldn't inject the script, handle the error.
  */
-browser.tabs.executeScript({file: "/content_scripts/beastify.js"})
+browser.tabs.executeScript({file: "/scripts/content/beastify.js"})
     .then(listenForClicks)
     .catch(reportExecuteScriptError);
+
+function updateIcon(filled) {
+    console.log("update")
+    return browser.browserAction.setIcon({
+        path: filled ? {
+            16: "icons/cup-fill.svg",
+            48: "icons/cup-fill.svg",
+            96: "icons/cup-fill.svg"
+        } : {
+            16: "icons/cup.svg",
+            48: "icons/cup.svg",
+            96: "icons/cup.svg",
+        },
+        tabId: currentTab.id
+    });
+}
 

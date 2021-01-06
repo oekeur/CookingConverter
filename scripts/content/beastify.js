@@ -27,10 +27,28 @@
      * Remove every beast from the page.
      */
     function removeExistingBeasts() {
+
         let existingBeasts = document.querySelectorAll(".beastify-image");
         for (let beast of existingBeasts) {
             beast.remove();
         }
+    }
+
+    function updateIcon(filled) {
+        console.log("update")
+        browser.browserAction.setIcon({
+            path: filled ? {
+                16: "icons/cup-fill.svg",
+                48: "icons/cup-fill.svg",
+                96: "icons/cup-fill.svg"
+            } : {
+                16: "icons/cup.svg",
+                48: "icons/cup.svg",
+                96: "icons/cup.svg",
+            },
+            tabId: currentTab.id
+        });
+        console.log("updated")
     }
 
     /**
@@ -40,8 +58,11 @@
     browser.runtime.onMessage.addListener((message) => {
         if (message.command === "beastify") {
             insertBeast(message.beastURL);
+            updateIcon(true);
         } else if (message.command === "reset") {
             removeExistingBeasts();
+            updateIcon(false);
+
         }
     });
 
